@@ -17,7 +17,7 @@ const (
 	serverPort = ":8080"
 	dbUrl      = "file:cotacoes.db?cache=shared&mode=rwc&_pragma=busy_timeout(5000)"
 	apiTimeout = 200 * time.Millisecond
-	dbTimeout  = 200 * time.Millisecond
+	dbTimeout  = 10 * time.Millisecond
 )
 
 type quote struct {
@@ -82,21 +82,21 @@ func (s *server) handleCotacao(w http.ResponseWriter, r *http.Request) {
 	q, err := s.fetchUSD(r.Context())
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			log.Printf("contexto excedido/cancelado: %v", err)
+			log.Printf("[fetchUSD] contexto excedido/cancelado: %v", err)
 			http.Error(w, "Tempo limite excedido", http.StatusGatewayTimeout)
 			return
 		}
 
-		log.Printf("erro ao buscar cotação: %v", err)
+		log.Printf("[fetchUSD] erro ao buscar cotação: %v", err)
 		http.Error(w, "erro ao consultar API externa", http.StatusInternalServerError)
 		return
 	}
 
 	if err := s.saveQuote(r.Context(), q); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			log.Printf("contexto excedido/cancelado ao salvar cotação: %v", err)
+			log.Printf("[saveQuote] contexto excedido/cancelado ao salvar cotação: %v", err)
 		} else {
-			log.Printf("erro ao salvar cotação: %v", err)
+			log.Printf("[saveQuote] erro ao salvar cotação: %v", err)
 		}
 	}
 
