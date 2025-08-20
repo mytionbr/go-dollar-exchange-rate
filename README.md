@@ -35,16 +35,14 @@ cat cotacao.txt
 
 ---
 
-## Testes Rápidos
+## Testes
 
-- **Chamada direta ao endpoint** (sem o client), em outro terminal:
+- Chamada direta ao endpoint:
 ```bash
 curl -s http://localhost:8080/cotacao
 ```
 
-- **Reexecutar o client** para gerar/atualizar `cotacao.txt`:
+- Executar o client para gerar/atualizar `cotacao.txt`:
 ```bash
 go run client.go
 ```
-
----
